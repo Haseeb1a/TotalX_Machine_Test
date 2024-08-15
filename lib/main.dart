@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:totalxtest/view/auth/login_page.dart';
+import 'package:totalxtest/view/auth/otp_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,13 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-              debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       title: 'TotalxUsers',
       theme: ThemeData(
-        
         useMaterial3: true,
       ),
-      home: const Loginpage(),
+      home: const OtpPage(),
+      
     );
   }
 }
