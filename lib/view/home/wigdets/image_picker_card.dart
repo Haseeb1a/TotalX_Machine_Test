@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:totalxtest/controller/home_user_controller.dart';
 
@@ -21,7 +20,7 @@ class ImagePickerCard extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: mqSize.height * .02),
-        Consumer<HomeUserController>(builder: (context, userProvider, child) {
+        Consumer<HomeProvider>(builder: (context, userImageController, child) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -31,7 +30,6 @@ class ImagePickerCard extends StatelessWidget {
                       shape: const CircleBorder(),
                       fixedSize: Size(mqSize.width * .3, mqSize.height * .15)),
                   onPressed: () async {
-                      userProvider.setProfilePic(ImageSource.gallery);
                   },
                   child: Image.asset('assets/images/gallery.png')),
               ElevatedButton(
@@ -39,8 +37,7 @@ class ImagePickerCard extends StatelessWidget {
                       backgroundColor: Colors.white,
                       shape: const CircleBorder(),
                       fixedSize: Size(mqSize.width * .3, mqSize.height * .15)),
-                  onPressed: () {
-                    userProvider.setProfilePic(ImageSource.camera);
+                  onPressed: () async {
                   },
                   child: Image.asset('assets/images/camera.png')),
             ],

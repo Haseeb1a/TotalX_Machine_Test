@@ -1,6 +1,11 @@
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:totalxtest/constants/colors.dart';
 import 'package:totalxtest/constants/style.dart';
+import 'package:totalxtest/controller/auth_controller.dart';
+import 'package:totalxtest/controller/home_user_controller.dart';
+import 'package:totalxtest/view/auth/login_page.dart';
 import 'package:totalxtest/view/home/wigdets/add_user_dailog.dart';
 import 'package:totalxtest/view/home/wigdets/sort_list.dart';
 import 'package:totalxtest/view/home/wigdets/user_card_item.dart';
@@ -37,84 +42,117 @@ class Homepage extends StatelessWidget {
               ],
             ),
             actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.logout_outlined,
-                  color: AppColors.white,
-                ),
+              Consumer<AuthController>(
+                builder: (context, authController, child) {
+                  return IconButton(
+                    onPressed: () {
+                      authController
+                          .signOut()
+                          .then((value) => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Loginpage(),
+                              )));
+                    },
+                    icon: const Icon(
+                      Icons.logout_outlined,
+                      color: AppColors.white,
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 3),
             ],
           ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  children: [
-                    Row(
+          body: Consumer<HomeProvider>(
+            builder: (context, homeProvider, child) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: Custom_Textformfeild(
-                            iconvisible: true,
-                            hinttext: 'Search by name',
-                            unvaildText: 'Enter a valid Name',
-                          ),
-                        ),
-                        SizedBox(
-                          width: mqSize.width * 0.02,
-                        ),
-                        IconButton(
-                          style: ButtonStyle(
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(11),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Custom_Textformfeild(
+                                  // controller: homeProvider.searchController,
+                                  iconvisible: true,
+                                  hinttext: 'Search by name',
+                                  unvaildText: 'Enter a valid Name',
+                                  onButtonPressed: (value) {
+                                    //  homeProvider.search(value);
+                                  }),
+                            ),
+                            SizedBox(
+                              width: mqSize.width * 0.02,
+                            ),
+                            IconButton(
+                              style: ButtonStyle(
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(11),
+                                  ),
+                                ),
+                                backgroundColor: const WidgetStatePropertyAll(
+                                  Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) =>
+                                      SortList(), // Bottom Sheet
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.filter_list_outlined,
+                                color: Colors.white,
+                                size: 28,
                               ),
                             ),
-                            backgroundColor: const WidgetStatePropertyAll(
-                              Colors.black,
-                            ),
-                          ),
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => SortList(), // Bottom Sheet
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.filter_list_outlined,
-                            color: Colors.white,
-                            size: 28,
+                          ],
+                        ),
+                        SizedBox(height: mqSize.height * 0.02),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: AppStyles.normalText(
+                            title: 'Users Lists',
+                            size: 17,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: mqSize.height * 0.02),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: AppStyles.normalText(
-                        title: 'Users Lists',
-                        size: 17,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 7),
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return const UserCardItem();
-                    },
                   ),
-                ),
-              ),
-            ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 7),
+                      child: homeProvider.isLoading? Center(
+                        child: CircularProgressIndicator(),
+                      ): homeProvider.usersList.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'No users found.',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            )
+                          : ListView.builder(
+                              controller: homeProvider.scrollController,
+                              itemCount: homeProvider.usersList.length,
+                              itemBuilder: (context, index) {
+                                final data = homeProvider.usersList[index];
+                                return UserCardItem(
+                                  user: data,
+                                );
+                              },
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           floatingActionButton: SizedBox(
             height: mqSize.height * 0.10,

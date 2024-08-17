@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:totalxtest/constants/colors.dart';
 import 'package:totalxtest/constants/style.dart';
+import 'package:totalxtest/controller/auth_controller.dart';
+import 'package:totalxtest/view/widgets/snakbar.dart';
 import 'package:totalxtest/view/widgets/textformfield.dart';
 
 class Loginpage extends StatelessWidget {
@@ -39,10 +42,15 @@ class Loginpage extends StatelessWidget {
                 height: mqsize.height * 0.02,
               ),
               //   ),
-              Custom_Textformfeild(
-                hinttext: 'Enter Mobile Number',
-                unvaildText: "Enter Valid Number",
-                keybordtype: TextInputType.number,
+              Consumer<AuthController>(
+                builder: (context, authcontroller, child) {
+                  return Custom_Textformfeild(
+                    controller: authcontroller.numberController,
+                    hinttext: 'Enter Mobile Number',
+                    unvaildText: "Enter Valid Number",
+                    keybordtype: TextInputType.number,
+                  );
+                },
               ),
               SizedBox(
                 height: mqsize.height * 0.03,
@@ -73,13 +81,33 @@ class Loginpage extends StatelessWidget {
               SizedBox(
                   height: mqsize.height * 0.06,
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(Colors.black),
-                    ),
-                    onPressed: () {},
-                    child: AppStyles.normalText(
-                        title: 'Get OTP', color: Colors.white, size: 15),
+                  child: Consumer<AuthController>(
+                    builder: (context, authController, child) {
+                      return ElevatedButton(
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(Colors.black),
+                        ),
+                        onPressed: () {
+                          if (authController.numberController.text.length ==
+                              10) {
+                            authController.loginWithPhoneNumber(context);
+                          } else if (authController
+                              .numberController.text.isEmpty) {
+                            showSnackBar(context,
+                                'Please enter the phone number', AppColors.error);
+                          } else if (authController
+                                      .numberController.text.length <
+                                  10 ||
+                              authController.numberController.text.length >
+                                  10) {
+                            showSnackBar(context,
+                                'Please enter a 10 digit number', AppColors.error);
+                          }
+                        },
+                        child: AppStyles.normalText(
+                            title: 'Get OTP', color: AppColors.white, size: 15),
+                      );
+                    },
                   ))
             ],
           ),

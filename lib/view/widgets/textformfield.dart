@@ -3,20 +3,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:totalxtest/constants/colors.dart';
 
 class Custom_Textformfeild extends StatelessWidget {
-  String unvaildText;
+ final String unvaildText;
   final String hinttext;
   final Color hintcolor;
   final int maxline;
   final Color iconColor;
+  final TextEditingController? controller;
   final TextInputType keybordtype;
   final bool obscureText;
   final bool iconvisible;
   final double feildheight;
+  final Function(String)? onButtonPressed;
   Custom_Textformfeild(
       {super.key,
       this.keybordtype = TextInputType.name,
+      this.onButtonPressed,
       this.obscureText = false,
       required this.hinttext,
+      this.controller,
       this.hintcolor = AppColors.dark,
       this.maxline = 1,
       this.iconColor = AppColors.dark,
@@ -28,6 +32,8 @@ class Custom_Textformfeild extends StatelessWidget {
   Widget build(BuildContext context) {
     final mqSize = MediaQuery.of(context).size;
     return TextFormField(
+        onChanged:onButtonPressed,
+        controller: controller,
         obscureText: obscureText,
         cursorColor: AppColors.styleBlue,
         maxLines: maxline,

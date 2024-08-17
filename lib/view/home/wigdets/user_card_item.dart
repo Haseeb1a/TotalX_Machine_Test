@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:totalxtest/constants/colors.dart';
 import 'package:totalxtest/constants/style.dart';
 
+import '../../../model/user_model.dart';
+
 class UserCardItem extends StatelessWidget {
-  const UserCardItem({super.key});
+   final UserModel user;
+  const UserCardItem({super.key,required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +23,12 @@ class UserCardItem extends StatelessWidget {
           leading: CircleAvatar(
             radius: 30,
             backgroundImage: Image.network(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkXhhV-hg6bniQ8V2oY6WFTcOiEUmC_qZy0XGUuh0q3SMXn6DvbtM7HTsIj9YOpLTEcK0&usqp=CAU',
+              user.image,
               fit: BoxFit.cover,
             ).image,
           ),
           title: AppStyles.normalText(
-              title: 'Amal',
+              title:user.name,
               size: 15,
               color: AppColors.dark,
               fontWeight: FontWeight.w600),
@@ -36,7 +39,7 @@ class UserCardItem extends StatelessWidget {
                 height: mqSize.height * 0.007,
               ),
               AppStyles.normalText(
-                  title: 'Age: 24',
+                  title: 'Age ${user.age}',
                   size: 15,
                   color: AppColors.dark,
                   fontWeight: FontWeight.w500)
