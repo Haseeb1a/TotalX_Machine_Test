@@ -82,7 +82,7 @@ class OtpPage extends StatelessWidget {
                 Align(
                     alignment: Alignment.center,
                     child: AppStyles.normalText(
-                      title: "Sec",
+                      title:  '${authController.counter}Sec',
                       color: AppColors.error,
                       size: 14,
                     )),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:totalxtest/controller/home_user_controller.dart';
+import 'package:totalxtest/constants/colors.dart';
+
+import '../../../controller/user_add_controller.dart';
 
 class ImagePickerCard extends StatelessWidget {
   const ImagePickerCard({super.key});
@@ -20,24 +23,36 @@ class ImagePickerCard extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: mqSize.height * .02),
-        Consumer<HomeProvider>(builder: (context, userImageController, child) {
+        Consumer<UserAddController>(builder: (context, addProvider, child) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.white,
                       shape: const CircleBorder(),
                       fixedSize: Size(mqSize.width * .3, mqSize.height * .15)),
                   onPressed: () async {
+                    await addProvider
+                        .pickImage(ImageSource.gallery)
+                        .then((value) {
+                      FocusScope.of(context).unfocus();
+                      Navigator.pop(context);
+                    });
                   },
                   child: Image.asset('assets/images/gallery.png')),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.white,
                       shape: const CircleBorder(),
                       fixedSize: Size(mqSize.width * .3, mqSize.height * .15)),
                   onPressed: () async {
+                    await addProvider
+                        .pickImage(ImageSource.camera)
+                        .then((value) {
+                      FocusScope.of(context).unfocus();
+                      Navigator.pop(context);
+                    });
                   },
                   child: Image.asset('assets/images/camera.png')),
             ],

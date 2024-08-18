@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:totalxtest/constants/colors.dart';
+import 'package:totalxtest/constants/search.dart';
 import 'package:totalxtest/constants/style.dart';
 import 'package:totalxtest/controller/home_user_controller.dart';
+import 'package:totalxtest/controller/user_add_controller.dart';
+import 'package:totalxtest/model/user_model.dart';
 import 'package:totalxtest/view/home/wigdets/image_picker_card.dart';
+import 'package:totalxtest/view/widgets/show_dailog.dart';
 import 'package:totalxtest/view/widgets/textformfield.dart';
+
+import '../../../constants/toast_message.dart';
+import '../../../service/user_add_services.dart';
 
 class AddUserDailog extends StatelessWidget {
   const AddUserDailog({
@@ -21,8 +30,8 @@ class AddUserDailog extends StatelessWidget {
           child: SizedBox(
               height: mqSize.height * .56,
               width: mqSize.width,
-              child: Consumer<HomeProvider>(
-                builder: (context, userProvider, child) {
+              child: Consumer<UserAddController>(
+                builder: (context, adduserProvider, child) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -39,11 +48,9 @@ class AddUserDailog extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: mqSize.height * 0.08,
-                              // backgroundImage:;
-                              //  userProvider.imagePath.isEmpty
-                              //     ? null
-                              //     : FileImage(File(userProvider.imagePath)
-                              //     ),
+                              backgroundImage: adduserProvider.imagePath.isEmpty
+                                  ? null
+                                  : FileImage(File(adduserProvider.imagePath)),
                             ),
                             Positioned(
                               left: mqSize.width * 0.01,
@@ -102,6 +109,7 @@ class AddUserDailog extends StatelessWidget {
                         height: mqSize.height * 0.005,
                       ),
                       Custom_Textformfeild(
+                        controller: adduserProvider.nameController,
                         hinttext: "Name",
                         unvaildText: "Please Enter the Name",
                         feildheight: 5,
@@ -121,6 +129,7 @@ class AddUserDailog extends StatelessWidget {
                         height: 5,
                       ),
                       Custom_Textformfeild(
+                        controller: adduserProvider.ageController,
                         hinttext: " Age",
                         unvaildText: "Please Enter the Age",
                         feildheight: 5,
@@ -143,7 +152,12 @@ class AddUserDailog extends StatelessWidget {
                                     backgroundColor:
                                         const WidgetStatePropertyAll(
                                             AppColors.offWhiteside)),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  adduserProvider.nameController.clear();
+                                  adduserProvider.ageController.clear();
+                                  adduserProvider.imagePath = '';
+                                },
                                 child: AppStyles.normalText(
                                     title: 'Cancel',
                                     color: AppColors.grey,
@@ -156,21 +170,65 @@ class AddUserDailog extends StatelessWidget {
                           SizedBox(
                               width: mqSize.width * .27,
                               height: mqSize.height * 0.04,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                    shape: WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10))),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppColors.styleBlueshade)),
-                                onPressed: () {},
-                                child: AppStyles.normalText(
-                                    title: 'Save',
-                                    color: AppColors.white,
-                                    size: 13,
-                                    fontWeight: FontWeight.w500),
-                              )),
+                              child: Consumer<HomeProvider>(
+                                  builder: (context, homeProvider, child) {
+                                return ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: WidgetStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10))),
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          AppColors.styleBlueshade)),
+                                  onPressed: () async {
+                                    if (adduserProvider
+                                            .nameController.text.isNotEmpty &&
+                                        adduserProvider
+                                            .ageController.text.isNotEmpty &&
+                                        adduserProvider.imagePath.isNotEmpty) {
+                                      adduserProvider.isLoading = true;
+
+                                      if (adduserProvider.isLoading) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                const SaveDailog());
+                                      }
+                                      final image = await AddUserService()
+                                          .getUserProfilePicture(
+                                              File(adduserProvider.imagePath));
+
+                                      final user = UserModel(
+                                          name: adduserProvider
+                                              .nameController.text,
+                                          age: int.parse(adduserProvider
+                                              .ageController.text
+                                              .trim()),
+                                          image: image,
+                                          serach: search(adduserProvider
+                                              .nameController.text));
+                                      await adduserProvider
+                                          .addUser(user)
+                                          .then((value) {
+                                        homeProvider.addUserLocaly(user);
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                      });
+                                      adduserProvider.isLoading = false;
+
+                                      adduserProvider.clearDatas();
+                                    } else {
+                                      ToastMessage.showMessage(
+                                          'Please add all fields', Colors.red);
+                                    }
+                                  },
+                                  child: AppStyles.normalText(
+                                      title: 'Save',
+                                      color: AppColors.white,
+                                      size: 13,
+                                      fontWeight: FontWeight.w500),
+                                );
+                              })),
                         ],
                       ),
                     ],

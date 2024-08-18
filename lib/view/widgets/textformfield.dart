@@ -14,11 +14,15 @@ class Custom_Textformfeild extends StatelessWidget {
   final bool iconvisible;
   final double feildheight;
   final Function(String)? onButtonPressed;
+  final bool readOnlyacitvate;
+  final VoidCallback? ontap;
   Custom_Textformfeild(
       {super.key,
       this.keybordtype = TextInputType.name,
+      this.readOnlyacitvate=false,
       this.onButtonPressed,
       this.obscureText = false,
+      this.ontap,
       required this.hinttext,
       this.controller,
       this.hintcolor = AppColors.dark,
@@ -32,6 +36,8 @@ class Custom_Textformfeild extends StatelessWidget {
   Widget build(BuildContext context) {
     final mqSize = MediaQuery.of(context).size;
     return TextFormField(
+      onTap: ontap,
+      readOnly: readOnlyacitvate,
         onChanged:onButtonPressed,
         controller: controller,
         obscureText: obscureText,

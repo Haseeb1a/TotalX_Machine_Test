@@ -3,11 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:totalxtest/constants/sort.dart';
 import '../model/user_model.dart';
 
-class UserServices {
-  factory UserServices() {
-    return UserServices._();
-  }
-  UserServices._();
+class HomeServices {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final firestore = FirebaseFirestore.instance;
   QueryDocumentSnapshot? lastDocs;

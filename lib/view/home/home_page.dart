@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:totalxtest/constants/colors.dart';
@@ -7,6 +6,7 @@ import 'package:totalxtest/controller/auth_controller.dart';
 import 'package:totalxtest/controller/home_user_controller.dart';
 import 'package:totalxtest/view/auth/login_page.dart';
 import 'package:totalxtest/view/home/wigdets/add_user_dailog.dart';
+import 'package:totalxtest/view/home/wigdets/search_page.dart';
 import 'package:totalxtest/view/home/wigdets/sort_list.dart';
 import 'package:totalxtest/view/home/wigdets/user_card_item.dart';
 import 'package:totalxtest/view/widgets/textformfield.dart';
@@ -76,12 +76,12 @@ class Homepage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Custom_Textformfeild(
-                                  // controller: homeProvider.searchController,
+                                ontap: () =>Navigator.push(context,MaterialPageRoute(builder: (context) => SearchUserScreen(),)),
+                                  readOnlyacitvate: true,
                                   iconvisible: true,
                                   hinttext: 'Search by name',
                                   unvaildText: 'Enter a valid Name',
                                   onButtonPressed: (value) {
-                                    //  homeProvider.search(value);
                                   }),
                             ),
                             SizedBox(
@@ -129,25 +129,45 @@ class Homepage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 0, horizontal: 7),
-                      child: homeProvider.isLoading? Center(
-                        child: CircularProgressIndicator(),
-                      ): homeProvider.usersList.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'No users found.',
-                                style: TextStyle(fontSize: 18),
-                              ),
+                      child: homeProvider.isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
                             )
-                          : ListView.builder(
-                              controller: homeProvider.scrollController,
-                              itemCount: homeProvider.usersList.length,
-                              itemBuilder: (context, index) {
-                                final data = homeProvider.usersList[index];
-                                return UserCardItem(
-                                  user: data,
-                                );
-                              },
-                            ),
+                          : homeProvider.usersList.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    'No users found.',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  controller: homeProvider.scrollController,
+                                  itemCount: homeProvider.usersList.length,
+                                  itemBuilder: (context, index) {
+                                    final data = homeProvider.usersList[index];
+                                    return Column(
+                                      children: [
+                                        UserCardItem(
+                                          user: data,
+                                        ),
+                                        if (index ==
+                                                homeProvider.usersList.length -
+                                                    1 &&
+                                            homeProvider.isMoreDataLoading)
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 3,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          )
+                                      ],
+                                    );
+                                  },
+                                ),
                     ),
                   ),
                 ],

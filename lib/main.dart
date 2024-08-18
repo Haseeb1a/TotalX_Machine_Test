@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:totalxtest/controller/auth_controller.dart';
 import 'package:totalxtest/controller/home_user_controller.dart';
+import 'package:totalxtest/controller/serach_controller.dart';
+import 'package:totalxtest/controller/user_add_controller.dart';
 import 'package:totalxtest/firebase_options.dart';
 import 'package:totalxtest/view/auth/login_page.dart';
-import 'package:totalxtest/view/auth/otp_page.dart';
 import 'package:totalxtest/view/home/home_page.dart';
 
 void main() async {
@@ -29,6 +30,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => AuthController(),
+        ),
+          ChangeNotifierProvider(
+          create: (context) => UserAddController(),
+        ),
+           ChangeNotifierProvider(
+          create: (context) => SearchUserProvider(),
         ),
       ],
       child: MaterialApp(
